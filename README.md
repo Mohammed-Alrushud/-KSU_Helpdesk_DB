@@ -1,6 +1,6 @@
 # -KSU_Helpdesk_DB 
 
-A database project for managing IT helpdesk operations, developed for the IS230 course at King Saud University.
+A database project for managing IT helpdesk operations, developed for the IS230 course.
 
 ## Features
 - ER design for users, tickets, technicians, fixes, and relationships
