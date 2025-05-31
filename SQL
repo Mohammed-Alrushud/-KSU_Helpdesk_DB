@@ -1,0 +1,116 @@
+CREATE SCHEMA IF NOT EXISTS KSU_Helpdesk DEFAULT CHARACTER SET utf8;
+USE KSU_Helpdesk;
+
+CREATE TABLE IF NOT EXISTS KSU_Helpdesk.User (
+  Username VARCHAR(16) NOT NULL,
+  Full_name VARCHAR(45),
+  Mobile_number VARCHAR(10),
+  College VARCHAR(45),
+  Department VARCHAR(45),
+  PRIMARY KEY (Username)
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS KSU_Helpdesk.Ticket (
+  TicketID VARCHAR(12) NOT NULL,
+  Date DATE,
+  User_Username VARCHAR(16) NOT NULL,
+  INDEX fk_Ticket_User_idx (User_Username ASC),
+  PRIMARY KEY (TicketID),
+  CONSTRAINT fk_Ticket_User
+    FOREIGN KEY (User_Username)
+    REFERENCES KSU_Helpdesk.User (Username)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS KSU_Helpdesk.Ticket_rating (
+  RatingID VARCHAR(12) NOT NULL,
+  Category VARCHAR(45),
+  Ticket_TicketID VARCHAR(12) NOT NULL,
+  PRIMARY KEY (RatingID),
+  INDEX fk_Ticket_rating_Ticket1_idx (Ticket_TicketID ASC),
+  CONSTRAINT fk_Ticket_rating_Ticket1
+    FOREIGN KEY (Ticket_TicketID)
+    REFERENCES KSU_Helpdesk.Ticket (TicketID)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS KSU_Helpdesk.Fix (
+  FixNO VARCHAR(12) NOT NULL,
+  FixDesignation VARCHAR(100),
+  TotalTickets INT,
+  PRIMARY KEY (FixNO)
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS KSU_Helpdesk.Technican (
+  EmployeeID VARCHAR(12) NOT NULL,
+  PRIMARY KEY (EmployeeID)
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS KSU_Helpdesk.Tech_Email (
+  Email VARCHAR(45) NOT NULL,
+  EmpID VARCHAR(12) NOT NULL,
+  INDEX EmpID_idx (EmpID ASC),
+  PRIMARY KEY (Email, EmpID),
+  CONSTRAINT FK_EmpID
+    FOREIGN KEY (EmpID)
+    REFERENCES KSU_Helpdesk.Technican (EmployeeID)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS KSU_Helpdesk.Resolves (
+  Ticket_TicketID VARCHAR(12) NOT NULL,
+  Fix_FixNO VARCHAR(12) NOT NULL,
+  PRIMARY KEY (Ticket_TicketID, Fix_FixNO),
+  INDEX fk_Ticket_has_Fix_Fix1_idx (Fix_FixNO ASC),
+  INDEX fk_Ticket_has_Fix_Ticket1_idx (Ticket_TicketID ASC),
+  CONSTRAINT fk_Ticket_has_Fix_Ticket1
+    FOREIGN KEY (Ticket_TicketID)
+    REFERENCES KSU_Helpdesk.Ticket (TicketID)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_Ticket_has_Fix_Fix1
+    FOREIGN KEY (Fix_FixNO)
+    REFERENCES KSU_Helpdesk.Fix (FixNO)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS KSU_Helpdesk.Works_on (
+  Technican_EmployeeID VARCHAR(12) NOT NULL,
+  Fix_FixNO VARCHAR(12) NOT NULL,
+  Comment VARCHAR(100),
+  PRIMARY KEY (Technican_EmployeeID, Fix_FixNO),
+  INDEX fk_Technican_has_Fix_Fix1_idx (Fix_FixNO ASC),
+  INDEX fk_Technican_has_Fix_Technican1_idx (Technican_EmployeeID ASC),
+  CONSTRAINT fk_Technican_has_Fix_Technican1
+    FOREIGN KEY (Technican_EmployeeID)
+    REFERENCES KSU_Helpdesk.Technican (EmployeeID)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_Technican_has_Fix_Fix1
+    FOREIGN KEY (Fix_FixNO)
+    REFERENCES KSU_Helpdesk.Fix (FixNO)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS KSU_Helpdesk.Fix_Prerequisites (
+  FixNO VARCHAR(12) NOT NULL,
+  Required_FixNO VARCHAR(12) NOT NULL,
+  PRIMARY KEY (FixNO, Required_FixNO),
+  INDEX fk_Fix_has_Fix_Fix2_idx (Required_FixNO ASC),
+  INDEX fk_Fix_has_Fix_Fix1_idx (FixNO ASC),
+  CONSTRAINT fk_Fix_has_Fix_Fix1
+    FOREIGN KEY (FixNO)
+    REFERENCES KSU_Helpdesk.Fix (FixNO)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_Fix_has_Fix_Fix2
+    FOREIGN KEY (Required_FixNO)
+    REFERENCES KSU_Helpdesk.Fix (FixNO)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+) ENGINE = InnoDB;
