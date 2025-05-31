@@ -13,4 +13,4 @@ You can view the full project report here: [Report.pdf](./Report.pdf)
 
 - ## Preview
 
-This project demonstrates database modeling and MySQL implementation skills using a real-world helpdesk case.
+This project demonstrates database design and MySQL implementation skills using a real-world helpdesk case.
